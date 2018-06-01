@@ -29,6 +29,9 @@ public class User extends AbstractAuditingClass implements Serializable {
 
     private String password;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Weight> weights;
+
     @Embedded
     private UserDetails userDetails = new UserDetails();
 
