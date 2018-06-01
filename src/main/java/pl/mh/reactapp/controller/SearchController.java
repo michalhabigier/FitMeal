@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/search")
+@RequestMapping("user/search")
 public class SearchController {
 
     private final FoodRepository foodRepository;

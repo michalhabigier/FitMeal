@@ -28,8 +28,6 @@ public class SignUpDto {
     @Size(min = 6, max = 20)
     private String password;
 
-    private int height;
-
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate dateOfBirth;
