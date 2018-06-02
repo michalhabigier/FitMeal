@@ -1,6 +1,5 @@
 package pl.mh.reactapp.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -16,11 +15,14 @@ import pl.mh.reactapp.repository.WeightRepository;
 import pl.mh.reactapp.security.CurrentUser;
 import pl.mh.reactapp.security.UserPrincipal;
 import pl.mh.reactapp.util.AgeCalculator;
+import pl.mh.reactapp.util.ObjectMapperUtils;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.BinaryOperator;
 
 @RestController
 @RequestMapping("/user")
@@ -49,7 +51,6 @@ public class UserController {
         return ResponseEntity.created(location).body(new ApiResponse(true, "User details has been changed successfully"));
     }
 
-    //TODO Weight Entity
     @GetMapping("/profile/{username}")
     public UserProfile getByUsername(@PathVariable String username){
         User user = userRepository.findByUsername(username).orElseThrow(()->
@@ -57,10 +58,22 @@ public class UserController {
 
         int age = AgeCalculator.calculateAge(user.getDateOfBirth(), LocalDate.now());
 
-        Weight weight = weightRepository.findByUser(user).stream().reduce((first, second) -> second).orElse(null);
-
-        return new UserProfile(user.getUsername(), age, user.getCreatedDate().toLocalDate(), Objects.requireNonNull(weight).getWeight(),
+        return new UserProfile(user.getUsername(), age, user.getCreatedDate().toLocalDate(), user.getUserDetails().getCurrentWeight(),
                 user.getUserDetails().getHeight(), user.getUserDetails().getBodyFat(), user.getUserDetails().getWaistLevel());
+    }
+
+    @GetMapping("/profile/{username}/weightHistory")
+    public List<WeightDto> WeightsByUsername(@PathVariable String username){
+        User user = userRepository.findByUsername(username).orElseThrow(()->
+                new ResourceNotFoundException("User", "username", username));
+
+        //Weight weight = weightRepository.findByUser(user)
+        //       .stream()
+        //        .reduce(BinaryOperator.maxBy(Comparator.comparing(Weight::getDate))).get();
+
+        List<Weight> weights = weightRepository.findByUser(user);
+
+        return ObjectMapperUtils.mapAll(weights, WeightDto.class);
     }
 
     //TODO Post Entity
@@ -77,6 +90,6 @@ public class UserController {
         return ResponseEntity.created(location).body(new ApiResponse(true, "User weight has been successfully saved"));
     }
 
-
-
+    //@PostMapping("/profile/me/newPost")
+    //public ResponseEntity<?> addPost(@CurrentUser )
 }

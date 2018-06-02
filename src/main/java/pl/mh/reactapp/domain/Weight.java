@@ -26,4 +26,7 @@ public class Weight extends AbstractAuditingClass{
         this.weight = weight;
         this.user = user;
     }
+
+    public Weight() {
+    }
 }

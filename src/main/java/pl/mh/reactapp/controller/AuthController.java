@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.mh.reactapp.domain.Role;
 import pl.mh.reactapp.domain.RoleName;
 import pl.mh.reactapp.domain.User;
+import pl.mh.reactapp.domain.Weight;
 import pl.mh.reactapp.exception.AppException;
 import pl.mh.reactapp.payload.ApiResponse;
 import pl.mh.reactapp.payload.JwtAuthResponse;
@@ -23,10 +24,12 @@ import pl.mh.reactapp.payload.LoginDto;
 import pl.mh.reactapp.payload.SignUpDto;
 import pl.mh.reactapp.repository.RoleRepository;
 import pl.mh.reactapp.repository.UserRepository;
+import pl.mh.reactapp.repository.WeightRepository;
 import pl.mh.reactapp.security.JwtTokenProvider;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Collections;
 
 @RestController
@@ -37,6 +40,8 @@ public class AuthController {
 
     private final RoleRepository roleRepository;
 
+    private final WeightRepository weightRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -45,12 +50,14 @@ public class AuthController {
 
     @Autowired
     public AuthController(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
-                          JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+                          JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager,
+                          WeightRepository weightRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
+        this.weightRepository = weightRepository;
     }
 
     @PostMapping("/signin")
@@ -91,7 +98,11 @@ public class AuthController {
 
         user.setRoles(Collections.singleton(userRole));
 
+        Weight weight = new Weight(LocalDate.now(), 0, user);
+
         User result = userRepository.save(user);
+
+        weightRepository.save(weight);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/users/{username}")
