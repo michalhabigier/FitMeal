@@ -35,6 +35,9 @@ public class User extends AbstractAuditingClass implements Serializable {
     @OneToMany(mappedBy = "user")
     private Set<Post> posts;
 
+    @OneToMany(mappedBy = "user")
+    private Set<EatenFood> eatenFoods;
+
     @Embedded
     private UserDetails userDetails = new UserDetails();
 

@@ -1,13 +1,14 @@
 package pl.mh.reactapp.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Data
 @Embeddable
-public class UserDetails {
+public class UserDetails{
 
     private int height;
 

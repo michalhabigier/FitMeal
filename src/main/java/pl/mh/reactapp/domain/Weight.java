@@ -1,11 +1,13 @@
 package pl.mh.reactapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
+
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 public class Weight extends AbstractAuditingClass{
