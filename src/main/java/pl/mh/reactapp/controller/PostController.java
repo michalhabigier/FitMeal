@@ -37,7 +37,6 @@ public class PostController {
         this.userRepository = userRepository;
     }
 
-    //TODO Post Entity
     @GetMapping("/profile/{username}/posts")
     public List<PostDto> getPostsByUsername(@PathVariable String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
