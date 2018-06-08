@@ -28,18 +28,18 @@ public class SearchController {
     }
 
     @GetMapping(params = "category")
-    public ResponseEntity<List<Food>> findByCategory(@RequestParam(name = "category", required = false) Category category){
+    public ResponseEntity<List<Food>> findByCategory(@RequestParam(name = "category", required = false) Category category) {
         List<Food> foods = foodRepository.findAll().stream().filter(p -> p.getCategory().equals(category)).collect(Collectors.toList());
         return new ResponseEntity<>(foods, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Food>> searchFood(@RequestParam String name){
+    public ResponseEntity<List<Food>> searchFood(@RequestParam String name) {
         return new ResponseEntity<>(foodRepository.findByNameContainingIgnoreCase(name), HttpStatus.OK);
     }
 
     @InitBinder
-    public void initBinder(WebDataBinder webDataBinder){
+    public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.registerCustomEditor(Category.class, new EnumConverter<>(Category.class));
     }
 

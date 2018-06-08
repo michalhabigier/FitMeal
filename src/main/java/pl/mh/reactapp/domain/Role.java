@@ -1,6 +1,5 @@
 package pl.mh.reactapp.domain;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
@@ -25,7 +24,7 @@ public class Role {
         this.name = name;
     }
 
-    public Role(){
+    public Role() {
 
     }
 }

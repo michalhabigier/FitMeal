@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @EqualsAndHashCode
-public class UserPrincipal implements UserDetails{
+public class UserPrincipal implements UserDetails {
     private Long id;
 
     private String username;

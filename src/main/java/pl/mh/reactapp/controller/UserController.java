@@ -20,9 +20,7 @@ import pl.mh.reactapp.util.ObjectMapperUtils;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.BinaryOperator;
 
 @RestController
 @RequestMapping("/user")
@@ -38,7 +36,7 @@ public class UserController {
     }
 
     @PutMapping("/profile/me/editDetails")
-    public ResponseEntity<?> editCurrentUserDetails(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody UserDetails userDetails){
+    public ResponseEntity<?> editCurrentUserDetails(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody UserDetails userDetails) {
         User user = userRepository.findUserById(currentUser.getId());
         user.getUserDetails().setBodyFat(userDetails.getBodyFat());
         user.getUserDetails().setCurrentWeight(userDetails.getCurrentWeight());
@@ -52,8 +50,8 @@ public class UserController {
     }
 
     @GetMapping("/profile/{username}")
-    public UserProfile getByUsername(@PathVariable String username){
-        User user = userRepository.findByUsername(username).orElseThrow(()->
+    public UserProfile getByUsername(@PathVariable String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new ResourceNotFoundException("User", "username", username));
 
         int age = AgeCalculator.calculateAge(user.getDateOfBirth(), LocalDate.now());
@@ -63,8 +61,8 @@ public class UserController {
     }
 
     @GetMapping("/profile/{username}/weightHistory")
-    public List<WeightDto> WeightsByUsername(@PathVariable String username){
-        User user = userRepository.findByUsername(username).orElseThrow(()->
+    public List<WeightDto> WeightsByUsername(@PathVariable String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new ResourceNotFoundException("User", "username", username));
 
         //Weight weight = weightRepository.findByUser(user)
@@ -80,7 +78,7 @@ public class UserController {
     //@GetMapping("/profile/{username}/posts/{id} wyświetlanie postów
 
     @PostMapping("/profile/me/addWeight")
-    public ResponseEntity<?> saveCurrentWeight(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody WeightDto weightDto){
+    public ResponseEntity<?> saveCurrentWeight(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody WeightDto weightDto) {
         User user = userRepository.findUserById(currentUser.getId());
         Weight weight = new Weight(weightDto.getDate(), weightDto.getWeight(), user);
         weightRepository.save(weight);

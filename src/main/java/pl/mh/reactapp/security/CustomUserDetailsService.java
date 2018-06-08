@@ -11,7 +11,7 @@ import pl.mh.reactapp.repository.UserRepository;
 import javax.transaction.Transactional;
 
 @Component
-public class CustomUserDetailsService implements UserDetailsService{
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 

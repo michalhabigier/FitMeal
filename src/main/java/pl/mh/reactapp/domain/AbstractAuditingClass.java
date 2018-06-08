@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class AbstractAuditingClass implements Serializable{
+public abstract class AbstractAuditingClass implements Serializable {
 
     @JsonIgnore
     @CreatedDate

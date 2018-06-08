@@ -1,6 +1,5 @@
 package pl.mh.reactapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -8,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-public class Weight extends AbstractAuditingClass{
+public class Weight extends AbstractAuditingClass {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

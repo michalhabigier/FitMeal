@@ -3,11 +3,11 @@ package pl.mh.reactapp.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import pl.mh.reactapp.domain.Category;
+import pl.mh.reactapp.domain.Food;
 import pl.mh.reactapp.domain.Role;
 import pl.mh.reactapp.domain.RoleName;
 import pl.mh.reactapp.repository.FoodRepository;
-import pl.mh.reactapp.domain.Category;
-import pl.mh.reactapp.domain.Food;
 import pl.mh.reactapp.repository.RoleRepository;
 
 @Component

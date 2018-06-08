@@ -1,13 +1,11 @@
 package pl.mh.reactapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,9 +30,6 @@ public class User extends AbstractAuditingClass implements Serializable {
     @OneToMany(mappedBy = "user")
     private Set<Weight> weights;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Post> posts;
-
     @Embedded
     private UserDetails userDetails = new UserDetails();
 
@@ -51,6 +46,6 @@ public class User extends AbstractAuditingClass implements Serializable {
         this.password = password;
     }
 
-    public User(){
+    public User() {
     }
 }
