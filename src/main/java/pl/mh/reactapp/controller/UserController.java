@@ -1,6 +1,7 @@
 package pl.mh.reactapp.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.mh.reactapp.domain.User;
@@ -8,6 +9,7 @@ import pl.mh.reactapp.domain.UserDetails;
 import pl.mh.reactapp.domain.Weight;
 import pl.mh.reactapp.exception.ResourceNotFoundException;
 import pl.mh.reactapp.payload.ApiResponse;
+import pl.mh.reactapp.payload.CurrentUserInfo;
 import pl.mh.reactapp.payload.UserProfile;
 import pl.mh.reactapp.payload.WeightDto;
 import pl.mh.reactapp.repository.UserRepository;
@@ -36,6 +38,7 @@ public class UserController {
     }
 
     @PutMapping("/profile/me/editDetails")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> editCurrentUserDetails(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody UserDetails userDetails) {
         User user = userRepository.findUserById(currentUser.getId());
         user.getUserDetails().setBodyFat(userDetails.getBodyFat());
@@ -60,24 +63,26 @@ public class UserController {
                 user.getUserDetails().getHeight(), user.getUserDetails().getBodyFat(), user.getUserDetails().getWaistLevel());
     }
 
+    @GetMapping("/profile/me")
+    @PreAuthorize("hasRole('USER')")
+    public CurrentUserInfo getCurrentUser(@CurrentUser UserPrincipal currentUser){
+        return new CurrentUserInfo(currentUser.getId(), currentUser.getUsername(), currentUser.getEmail());
+    }
+
+
     @GetMapping("/profile/{username}/weightHistory")
     public List<WeightDto> WeightsByUsername(@PathVariable String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new ResourceNotFoundException("User", "username", username));
-
-        //Weight weight = weightRepository.findByUser(user)
-        //       .stream()
-        //        .reduce(BinaryOperator.maxBy(Comparator.comparing(Weight::getDate))).get();
 
         List<Weight> weights = weightRepository.findByUser(user);
 
         return ObjectMapperUtils.mapAll(weights, WeightDto.class);
     }
 
-    //TODO Post Entity
-    //@GetMapping("/profile/{username}/posts/{id} wyświetlanie postów
 
     @PostMapping("/profile/me/addWeight")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> saveCurrentWeight(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody WeightDto weightDto) {
         User user = userRepository.findUserById(currentUser.getId());
         Weight weight = new Weight(weightDto.getDate(), weightDto.getWeight(), user);
@@ -88,6 +93,5 @@ public class UserController {
         return ResponseEntity.created(location).body(new ApiResponse(true, "User weight has been successfully saved"));
     }
 
-    //@PostMapping("/profile/me/newPost")
-    //public ResponseEntity<?> addPost(@CurrentUser )
+
 }

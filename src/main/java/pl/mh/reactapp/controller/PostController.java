@@ -1,14 +1,18 @@
 package pl.mh.reactapp.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.mh.reactapp.domain.Food;
 import pl.mh.reactapp.domain.Post;
 import pl.mh.reactapp.domain.User;
 import pl.mh.reactapp.exception.ResourceNotFoundException;
 import pl.mh.reactapp.payload.ApiResponse;
+import pl.mh.reactapp.payload.EatenFoodDto;
 import pl.mh.reactapp.payload.PostDto;
+import pl.mh.reactapp.repository.EatenFoodRepository;
+import pl.mh.reactapp.repository.FoodRepository;
 import pl.mh.reactapp.repository.PostRepository;
 import pl.mh.reactapp.repository.UserRepository;
 import pl.mh.reactapp.security.CurrentUser;
@@ -18,7 +22,9 @@ import pl.mh.reactapp.util.ObjectMapperUtils;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/user")
@@ -28,22 +34,27 @@ public class PostController {
 
     private final UserRepository userRepository;
 
-    @Autowired
-    private PostService postService;
+    private final EatenFoodRepository eatenFoodRepository;
 
-    @Autowired
-    public PostController(PostRepository postRepository, UserRepository userRepository) {
+    private final FoodRepository foodRepository;
+
+    private final PostService postService;
+
+    public PostController(PostRepository postRepository, UserRepository userRepository, EatenFoodRepository eatenFoodRepository,
+                          FoodRepository foodRepository, PostService postService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.eatenFoodRepository = eatenFoodRepository;
+        this.foodRepository = foodRepository;
+        this.postService = postService;
     }
 
-    //TODO Post Entity
     @GetMapping("/profile/{username}/posts")
     public List<PostDto> getPostsByUsername(@PathVariable String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new ResourceNotFoundException("User", "username", username));
 
-        List<Post> posts = postRepository.findByUser(user);
+        List<Post> posts = postRepository.findAllByUser(user);
         return ObjectMapperUtils.mapAll(posts, PostDto.class);
     }
 
@@ -59,4 +70,12 @@ public class PostController {
         return ResponseEntity.created(location)
                 .body(new ApiResponse(true, "Post Created Successfully"));
     }
+
+    @GetMapping("/profile/me/{localDate}")
+    public PostDto getPost(@PathVariable(value = "localDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate postDate, @CurrentUser UserPrincipal currentUser){
+        User user = userRepository.findUserById(currentUser.getId());
+        Optional<Post> post = postRepository.findAllByUser(user).stream().filter(p -> p.getDate().equals(postDate)).findFirst();
+        return ObjectMapperUtils.map(post, PostDto.class);
+    }
+
 }
