@@ -17,7 +17,7 @@ public class Weight extends AbstractAuditingClass {
     private double weight;
 
     @ManyToOne
-    @JoinColumn(name = "poll_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Weight(LocalDate date, double weight, User user) {
