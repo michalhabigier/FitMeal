@@ -19,12 +19,8 @@ public class SearchController {
 
     private final FoodRepository foodRepository;
 
-    private final FoodService foodService;
-
-
-    public SearchController(FoodRepository foodRepository, FoodService foodService) {
+    public SearchController(FoodRepository foodRepository) {
         this.foodRepository = foodRepository;
-        this.foodService = foodService;
     }
 
     @GetMapping(params = "category")

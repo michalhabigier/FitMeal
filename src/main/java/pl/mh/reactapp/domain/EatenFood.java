@@ -1,5 +1,6 @@
 package pl.mh.reactapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,18 +20,30 @@ public class EatenFood {
 
     private Double quantity;
 
+    private String name;
+
+    private double totalCalories;
+
+    private double proteins;
+
+    private double carbohydrates;
+
+    private double fat;
+
+    @JsonIgnore
     @ManyToOne
     private Food food;
 
+    @JsonIgnore
     @ManyToOne
     private Post post;
 
-    private LocalDate localDate;
-
-    public EatenFood(Double quantity, LocalDate localDate, Food food, Post post) {
+    public EatenFood(Double quantity, Food food, Post post) {
         this.quantity = quantity;
-        this.localDate = localDate;
         this.food = food;
         this.post = post;
+    }
+
+    public EatenFood() {
     }
 }

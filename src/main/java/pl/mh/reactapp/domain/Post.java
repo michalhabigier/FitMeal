@@ -16,7 +16,7 @@ public class Post {
     private LocalDate date;
 
     @OneToMany
-    private List<Food> foodList;
+    private List<EatenFood> foodList;
 
     private double calories;
 
@@ -28,8 +28,4 @@ public class Post {
 
     @ManyToOne
     private User user;
-
-    public void addFood(Food food) {
-        foodList.add(food);
-    }
 }

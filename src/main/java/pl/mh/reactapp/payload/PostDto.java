@@ -1,7 +1,9 @@
 package pl.mh.reactapp.payload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import pl.mh.reactapp.domain.EatenFood;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,13 +15,13 @@ public class PostDto {
 
     private LocalDate localDate = LocalDate.now();
 
-    private List<FoodDto> eatenFoods = new ArrayList<>();
+    private List<EatenFood> eatenFoods = new ArrayList<>();
 
-    private double calories = 0.0;
+    private double calories;
 
-    private double proteins = 0.0;
+    private double proteins;
 
-    private double carbohydrates = 0.0;
+    private double carbohydrates;
 
-    private double fat = 0.0;
+    private double fat;
 }
