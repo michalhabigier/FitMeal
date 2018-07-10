@@ -1,6 +1,5 @@
 package pl.mh.reactapp.payload;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import pl.mh.reactapp.domain.EatenFood;

@@ -20,7 +20,7 @@ public class FoodService {
         this.foodRepository = foodRepository;
     }
 
-    public void createFood(){
+    public void createFood() {
         Food food = new Food();
         food.setName(food.getName());
         food.setCategory(food.getCategory());
@@ -32,7 +32,7 @@ public class FoodService {
         log.debug("Created new ingredient \"{}\"", food.getName());
     }
 
-    public void updateFood(Food food){
+    public void updateFood(Food food) {
         food.setName(food.getName());
         food.setCategory(food.getCategory());
         food.setProteins(food.getProteins());

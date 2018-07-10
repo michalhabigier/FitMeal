@@ -16,7 +16,6 @@ import pl.mh.reactapp.util.AmountRounder;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostService {
@@ -48,54 +47,66 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public EatenFood addEatenFood(long postId, long foodId, FoodDto eatenFoodDto){
+    public void addEatenFood(long postId, long foodId, FoodDto eatenFoodDto) {
         Post post = postRepository.findById(postId);
         Food food = foodRepository.findById(foodId);
 
         EatenFood eatenFood = new EatenFood();
 
-        Double portion = eatenFoodDto.getPortion()/100;
+        Double portion = eatenFoodDto.getPortion() / 100;
 
         eatenFood.setQuantity(eatenFoodDto.getPortion());
         eatenFood.setName(food.getName());
-        eatenFood.setCarbohydrates(AmountRounder.round(food.getCarbohydrates()*portion));
-        eatenFood.setProteins(AmountRounder.round(food.getProteins()*portion));
-        eatenFood.setFat(AmountRounder.round(food.getFat()*portion));
-        eatenFood.setTotalCalories(AmountRounder.round(food.getTotalCalories()*portion));
+        eatenFood.setCarbohydrates(AmountRounder.round(food.getCarbohydrates() * portion));
+        eatenFood.setProteins(AmountRounder.round(food.getProteins() * portion));
+        eatenFood.setFat(AmountRounder.round(food.getFat() * portion));
+        eatenFood.setTotalCalories(AmountRounder.round(food.getTotalCalories() * portion));
         eatenFood.setPost(post);
         eatenFood.setFood(food);
 
-        return eatenFoodRepository.save(eatenFood);
+        eatenFoodRepository.save(eatenFood);
     }
 
-    public void deleteEatenFood(LocalDate localDate, long foodId){
+    public void deleteEatenFood(LocalDate localDate, long foodId) {
         Post post = postRepository.findPostByDate(localDate);
         EatenFood food = eatenFoodRepository.findByPostAndFoodId(post, foodId);
         eatenFoodRepository.delete(food);
     }
 
-    public EatenFood editEatenFoodWeight(@Valid FoodDto eatenFoodDto, LocalDate localDate, long foodId){
+    public void editEatenFoodWeight(@Valid FoodDto eatenFoodDto, LocalDate localDate, long foodId) {
         Post post = postRepository.findPostByDate(localDate);
         EatenFood eatenFood = eatenFoodRepository.findByPostAndFoodId(post, foodId);
+
         Food food = foodRepository.findById(foodId);
-        Double portion = eatenFoodDto.getPortion()/100;
+
+        Double portion = eatenFoodDto.getPortion() / 100;
+
         eatenFood.setQuantity(eatenFoodDto.getPortion());
         eatenFood.setName(food.getName());
-        eatenFood.setCarbohydrates(AmountRounder.round(food.getCarbohydrates()*portion));
-        eatenFood.setProteins(AmountRounder.round(food.getProteins()*portion));
-        eatenFood.setFat(AmountRounder.round(food.getFat()*portion));
-        eatenFood.setTotalCalories(AmountRounder.round(food.getTotalCalories()*portion));
-        return eatenFoodRepository.save(eatenFood);
+        eatenFood.setCarbohydrates(AmountRounder.round(food.getCarbohydrates() * portion));
+        eatenFood.setProteins(AmountRounder.round(food.getProteins() * portion));
+        eatenFood.setFat(AmountRounder.round(food.getFat() * portion));
+        eatenFood.setTotalCalories(AmountRounder.round(food.getTotalCalories() * portion));
+
+        eatenFoodRepository.save(eatenFood);
     }
 
-    public PostDto calculate(Post post){
+    public PostDto calculate(Post post) {
         PostDto postDto = new PostDto();
         List<EatenFood> eatenFoods = eatenFoodRepository.findByPost(post);
         postDto.setEatenFoods(eatenFoods);
-        Double totalCalories = eatenFoods.stream().mapToDouble(EatenFood::getTotalCalories).sum();
-        Double totalCarbohydrates = eatenFoods.stream().mapToDouble(EatenFood::getCarbohydrates).sum();
-        Double totalFat = eatenFoods.stream().mapToDouble(EatenFood::getFat).sum();
-        Double totalProteins = eatenFoods.stream().mapToDouble(EatenFood::getProteins).sum();
+        Double totalCalories = eatenFoods.stream()
+                .mapToDouble(EatenFood::getTotalCalories)
+                .sum();
+        Double totalCarbohydrates = eatenFoods.stream()
+                .mapToDouble(EatenFood::getCarbohydrates)
+                .sum();
+        Double totalFat = eatenFoods.stream()
+                .mapToDouble(EatenFood::getFat)
+                .sum();
+        Double totalProteins = eatenFoods.stream()
+                .mapToDouble(EatenFood::getProteins)
+                .sum();
         postDto.setCalories(AmountRounder.round(totalCalories));
         postDto.setCarbohydrates(AmountRounder.round(totalCarbohydrates));
         postDto.setFat(AmountRounder.round(totalFat));

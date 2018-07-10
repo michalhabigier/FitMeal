@@ -39,7 +39,8 @@ public class UserController {
 
     @PutMapping("/profile/me/editDetails")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> editCurrentUserDetails(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody UserDetails userDetails) {
+    public ResponseEntity<?> editCurrentUserDetails(@CurrentUser UserPrincipal currentUser,
+                                                    @Valid @RequestBody UserDetails userDetails) {
         User user = userRepository.findUserById(currentUser.getId());
         user.getUserDetails().setBodyFat(userDetails.getBodyFat());
         user.getUserDetails().setCurrentWeight(userDetails.getCurrentWeight());
@@ -49,7 +50,8 @@ public class UserController {
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/user/profile/{username}")
                 .buildAndExpand(user.getUsername()).toUri();
-        return ResponseEntity.created(location).body(new ApiResponse(true, "User details has been changed successfully"));
+        return ResponseEntity.created(location).body(
+                new ApiResponse(true, "User details has been changed successfully"));
     }
 
     @GetMapping("/profile/{username}")
@@ -59,13 +61,14 @@ public class UserController {
 
         int age = AgeCalculator.calculateAge(user.getDateOfBirth(), LocalDate.now());
 
-        return new UserProfile(user.getUsername(), age, user.getCreatedDate().toLocalDate(), user.getUserDetails().getCurrentWeight(),
-                user.getUserDetails().getHeight(), user.getUserDetails().getBodyFat(), user.getUserDetails().getWaistLevel());
+        return new UserProfile(user.getUsername(), age, user.getCreatedDate().toLocalDate(),
+                user.getUserDetails().getCurrentWeight(), user.getUserDetails().getHeight(),
+                user.getUserDetails().getBodyFat(), user.getUserDetails().getWaistLevel());
     }
 
     @GetMapping("/profile/me")
     @PreAuthorize("hasRole('USER')")
-    public CurrentUserInfo getCurrentUser(@CurrentUser UserPrincipal currentUser){
+    public CurrentUserInfo getCurrentUser(@CurrentUser UserPrincipal currentUser) {
         return new CurrentUserInfo(currentUser.getId(), currentUser.getUsername(), currentUser.getEmail());
     }
 
@@ -83,14 +86,16 @@ public class UserController {
 
     @PostMapping("/profile/me/addWeight")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> saveCurrentWeight(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody WeightDto weightDto) {
+    public ResponseEntity<?> saveCurrentWeight(@CurrentUser UserPrincipal currentUser,
+                                               @Valid @RequestBody WeightDto weightDto) {
         User user = userRepository.findUserById(currentUser.getId());
         Weight weight = new Weight(weightDto.getDate(), weightDto.getWeight(), user);
         weightRepository.save(weight);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/user/profile/{username}")
                 .buildAndExpand(user.getUsername()).toUri();
-        return ResponseEntity.created(location).body(new ApiResponse(true, "User weight has been successfully saved"));
+        return ResponseEntity.created(location).body(
+                new ApiResponse(true, "User weight has been successfully saved"));
     }
 
 

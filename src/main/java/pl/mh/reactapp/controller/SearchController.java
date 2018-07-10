@@ -8,7 +8,6 @@ import pl.mh.reactapp.config.EnumConverter;
 import pl.mh.reactapp.domain.Category;
 import pl.mh.reactapp.domain.Food;
 import pl.mh.reactapp.repository.FoodRepository;
-import pl.mh.reactapp.service.FoodService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +24,10 @@ public class SearchController {
 
     @GetMapping(params = "category")
     public ResponseEntity<List<Food>> findByCategory(@RequestParam(name = "category", required = false) Category category) {
-        List<Food> foods = foodRepository.findAll().stream().filter(p -> p.getCategory().equals(category)).collect(Collectors.toList());
+        List<Food> foods = foodRepository.findAll()
+                .stream()
+                .filter(p -> p.getCategory().equals(category))
+                .collect(Collectors.toList());
         return new ResponseEntity<>(foods, HttpStatus.OK);
     }
 

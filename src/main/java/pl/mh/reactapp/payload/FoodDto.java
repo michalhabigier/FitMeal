@@ -2,7 +2,6 @@ package pl.mh.reactapp.payload;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.mh.reactapp.domain.Food;
 
 @Getter
 @Setter
