@@ -7,10 +7,12 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.Getter;
 import lombok.Setter;
+import pl.mh.reactapp.domain.Sex;
 import pl.mh.reactapp.domain.Weight;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -27,6 +29,9 @@ public class SignUpDto {
     @Size(max = 40)
     @Email
     private String email;
+
+    @NotNull
+    private Sex sex;
 
     @NotBlank
     @Size(min = 6, max = 20)

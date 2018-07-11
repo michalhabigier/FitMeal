@@ -1,6 +1,7 @@
 package pl.mh.reactapp.payload;
 
 import lombok.Data;
+import pl.mh.reactapp.domain.Sex;
 
 import java.time.LocalDate;
 
@@ -10,6 +11,8 @@ public class UserProfile {
     private String username;
 
     private int age;
+
+    private Sex sex;
 
     private LocalDate joinedAt;
 
@@ -21,10 +24,11 @@ public class UserProfile {
 
     private double waistLevel;
 
-    public UserProfile(String username, int age, LocalDate joinedAt, double currentWeight, int height,
+    public UserProfile(String username, int age, Sex sex, LocalDate joinedAt, double currentWeight, int height,
                        double bodyFat, double waistLevel) {
         this.username = username;
         this.age = age;
+        this.sex = sex;
         this.joinedAt = joinedAt;
         this.currentWeight = currentWeight;
         this.height = height;

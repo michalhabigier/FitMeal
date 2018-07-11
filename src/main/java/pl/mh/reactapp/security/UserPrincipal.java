@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.mh.reactapp.domain.Sex;
 import pl.mh.reactapp.domain.User;
 
 import java.util.Collection;
@@ -23,14 +24,18 @@ public class UserPrincipal implements UserDetails {
     @JsonIgnore
     private String password;
 
+    private Sex sex;
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String username, String email, String password,
+                         Collection<? extends GrantedAuthority> authorities, Sex sex) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.sex = sex;
     }
 
     public static UserPrincipal create(User user) {
@@ -43,14 +48,14 @@ public class UserPrincipal implements UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities
+                authorities,
+                user.getSex()
         );
     }
 
     public Long getId() {
         return id;
     }
-
 
     public String getEmail() {
         return email;
@@ -69,6 +74,10 @@ public class UserPrincipal implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
+    }
+
+    public Sex getSex() {
+        return sex;
     }
 
     @Override

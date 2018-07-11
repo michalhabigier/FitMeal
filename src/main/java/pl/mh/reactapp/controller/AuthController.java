@@ -85,7 +85,7 @@ public class AuthController {
         }
 
         User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), signUpRequest.getDateOfBirth(),
-                signUpRequest.getPassword());
+                signUpRequest.getPassword(), signUpRequest.getSex());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -94,11 +94,7 @@ public class AuthController {
 
         user.setRoles(Collections.singleton(userRole));
 
-        Weight weight = new Weight(LocalDate.now(), 0, user);
-
         User result = userRepository.save(user);
-
-        weightRepository.save(weight);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/users/{username}")

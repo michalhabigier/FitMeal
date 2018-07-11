@@ -27,6 +27,8 @@ public class User extends AbstractAuditingClass implements Serializable {
 
     private String password;
 
+    private Sex sex;
+
     @OneToMany(mappedBy = "user")
     private Set<Weight> weights;
 
@@ -42,11 +44,12 @@ public class User extends AbstractAuditingClass implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String email, LocalDate dateOfBirth, String password) {
+    public User(String username, String email, LocalDate dateOfBirth, String password, Sex sex) {
         this.username = username;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
         this.password = password;
+        this.sex = sex;
     }
 
     public User() {
