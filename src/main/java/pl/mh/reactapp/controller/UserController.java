@@ -1,21 +1,18 @@
 package pl.mh.reactapp.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.mh.reactapp.domain.User;
 import pl.mh.reactapp.domain.UserDetails;
 import pl.mh.reactapp.domain.Weight;
 import pl.mh.reactapp.exception.ResourceNotFoundException;
-import pl.mh.reactapp.payload.ApiResponse;
-import pl.mh.reactapp.payload.CurrentUserInfo;
-import pl.mh.reactapp.payload.UserProfile;
-import pl.mh.reactapp.payload.WeightDto;
+import pl.mh.reactapp.payload.*;
 import pl.mh.reactapp.repository.UserRepository;
 import pl.mh.reactapp.repository.WeightRepository;
 import pl.mh.reactapp.security.CurrentUser;
 import pl.mh.reactapp.security.UserPrincipal;
+import pl.mh.reactapp.service.CaloricNeedsService;
 import pl.mh.reactapp.util.AgeCalculator;
 import pl.mh.reactapp.util.ObjectMapperUtils;
 
@@ -32,13 +29,16 @@ public class UserController {
 
     private final WeightRepository weightRepository;
 
-    public UserController(UserRepository userRepository, WeightRepository weightRepository) {
+    private final CaloricNeedsService caloricNeedsService;
+
+    public UserController(UserRepository userRepository, WeightRepository weightRepository,
+                          CaloricNeedsService caloricNeedsService) {
         this.userRepository = userRepository;
         this.weightRepository = weightRepository;
+        this.caloricNeedsService = caloricNeedsService;
     }
 
     @PutMapping("/profile/me/editDetails")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> editCurrentUserDetails(@CurrentUser UserPrincipal currentUser,
                                                     @Valid @RequestBody UserDetails userDetails) {
         User user = userRepository.findUserById(currentUser.getId());
@@ -61,17 +61,20 @@ public class UserController {
 
         int age = AgeCalculator.calculateAge(user.getDateOfBirth(), LocalDate.now());
 
-        return new UserProfile(user.getUsername(), age, user.getCreatedDate().toLocalDate(),
+        return new UserProfile(user.getUsername(), age, user.getSex(), user.getCreatedDate().toLocalDate(),
                 user.getUserDetails().getCurrentWeight(), user.getUserDetails().getHeight(),
                 user.getUserDetails().getBodyFat(), user.getUserDetails().getWaistLevel());
     }
 
     @GetMapping("/profile/me")
-    @PreAuthorize("hasRole('USER')")
     public CurrentUserInfo getCurrentUser(@CurrentUser UserPrincipal currentUser) {
-        return new CurrentUserInfo(currentUser.getId(), currentUser.getUsername(), currentUser.getEmail());
+        return new CurrentUserInfo(currentUser.getId(), currentUser.getUsername(), currentUser.getEmail(), currentUser.getSex());
     }
 
+    @PostMapping("/calculator")
+    public CalculatorDto calculateCaloricNeeds(@Valid @RequestBody CalculatorDto calculatorDto){
+        return caloricNeedsService.calculateTotal(calculatorDto);
+    }
 
     @GetMapping("/profile/{username}/weightHistory")
     public List<WeightDto> WeightsByUsername(@PathVariable String username) {
@@ -85,7 +88,6 @@ public class UserController {
 
 
     @PostMapping("/profile/me/addWeight")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> saveCurrentWeight(@CurrentUser UserPrincipal currentUser,
                                                @Valid @RequestBody WeightDto weightDto) {
         User user = userRepository.findUserById(currentUser.getId());

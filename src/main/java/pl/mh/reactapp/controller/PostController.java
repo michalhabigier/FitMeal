@@ -2,6 +2,7 @@ package pl.mh.reactapp.controller;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.mh.reactapp.domain.Post;
@@ -50,6 +51,7 @@ public class PostController {
     }
 
     @GetMapping("/profile/me/{localDate}")
+    @PreAuthorize("hasRole('USER')")
     public PostDto getPost(@PathVariable(value = "localDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate postDate,
                            @CurrentUser UserPrincipal currentUser) {
         User user = userRepository.findUserById(currentUser.getId());
