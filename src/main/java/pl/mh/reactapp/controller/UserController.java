@@ -71,9 +71,14 @@ public class UserController {
         return new CurrentUserInfo(currentUser.getId(), currentUser.getUsername(), currentUser.getEmail(), currentUser.getSex());
     }
 
-    @PostMapping("/calculator")
+    @PostMapping("/calculate/bmi")
     public CalculatorDto calculateCaloricNeeds(@Valid @RequestBody CalculatorDto calculatorDto){
-        return caloricNeedsService.calculateTotal(calculatorDto);
+        return caloricNeedsService.calculateBmi(calculatorDto);
+    }
+
+    @PostMapping("/calculate/bmr")
+    public CalculatorDto calculateBmr(@Valid @RequestBody CalculatorDto calculatorDto){
+        return caloricNeedsService.calculateBmr(calculatorDto);
     }
 
     @GetMapping("/profile/{username}/weightHistory")

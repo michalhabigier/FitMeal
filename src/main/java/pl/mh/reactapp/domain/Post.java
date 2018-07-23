@@ -28,4 +28,17 @@ public class Post {
 
     @ManyToOne
     private User user;
+
+    public Post() {
+    }
+
+    public Post(LocalDate date, List<EatenFood> foodList, double calories, double proteins, double carbohydrates, double fat, User user) {
+        this.date = date;
+        this.foodList = foodList;
+        this.calories = calories;
+        this.proteins = proteins;
+        this.carbohydrates = carbohydrates;
+        this.fat = fat;
+        this.user = user;
+    }
 }
