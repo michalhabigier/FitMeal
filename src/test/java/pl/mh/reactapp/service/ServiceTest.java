@@ -92,6 +92,10 @@ public class ServiceTest {
         List<EatenFood> eatenFoods = postService.getEatenFoodsByPost(post);
         assertEquals(2, eatenFoods.size());
 
+        //checking if duplicate will be added
+        postService.addEatenFood(post.getId(), exampleFood2.getId(), 100);
+        assertNotEquals(3, postService.getEatenFoodsByPost(post).size());
+
         postDto.setCalories(postService.calculate(post).getCalories());
         double caloriesCopy = postDto.getCalories();
         assertNotEquals(caloriesCopy, 0);

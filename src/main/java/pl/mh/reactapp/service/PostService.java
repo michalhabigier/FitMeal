@@ -17,6 +17,7 @@ import pl.mh.reactapp.util.AmountRounder;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class PostService {
@@ -52,19 +53,23 @@ public class PostService {
         Post post = postRepository.findById(postId);
         Food food = foodRepository.findById(foodId);
 
-        EatenFood eatenFood = new EatenFood();
+        boolean exists = eatenFoodRepository.findAll().stream()
+                .map(EatenFood::getName)
+                .anyMatch(food.getName()::equals);
 
-        eatenFood.setQuantity(portion);
-        portion = portion/100;
-        eatenFood.setName(food.getName());
-        eatenFood.setCarbohydrates(AmountRounder.round(food.getCarbohydrates() * portion));
-        eatenFood.setProteins(AmountRounder.round(food.getProteins() * portion));
-        eatenFood.setFat(AmountRounder.round(food.getFat() * portion));
-        eatenFood.setTotalCalories(AmountRounder.round(food.getTotalCalories() * portion));
-        eatenFood.setPost(post);
-        eatenFood.setFood(food);
-
-        eatenFoodRepository.save(eatenFood);
+        if(!exists) {
+            EatenFood eatenFood = new EatenFood();
+            eatenFood.setQuantity(portion);
+            portion = portion / 100;
+            eatenFood.setName(food.getName());
+            eatenFood.setCarbohydrates(AmountRounder.round(food.getCarbohydrates() * portion));
+            eatenFood.setProteins(AmountRounder.round(food.getProteins() * portion));
+            eatenFood.setFat(AmountRounder.round(food.getFat() * portion));
+            eatenFood.setTotalCalories(AmountRounder.round(food.getTotalCalories() * portion));
+            eatenFood.setPost(post);
+            eatenFood.setFood(food);
+            eatenFoodRepository.save(eatenFood);
+        }
     }
 
     public void deleteEatenFood(LocalDate localDate, long foodId) {

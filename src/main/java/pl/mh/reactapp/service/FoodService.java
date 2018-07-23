@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.mh.reactapp.domain.Category;
+import pl.mh.reactapp.domain.EatenFood;
 import pl.mh.reactapp.domain.Food;
 import pl.mh.reactapp.payload.FoodDto;
 import pl.mh.reactapp.repository.FoodRepository;
@@ -26,16 +27,24 @@ public class FoodService {
     }
 
     public Food createFood(FoodDto foodDto) {
-        Food food = new Food();
-        food.setName(foodDto.getName());
-        food.setCategory(foodDto.getCategory());
-        food.setProteins(foodDto.getProteins());
-        food.setCarbohydrates(foodDto.getCarbohydrates());
-        food.setProteins(foodDto.getProteins());
-        food.setTotalCalories(foodDto.getTotalCalories());
-        food.setCategory(foodDto.getCategory());
-        log.debug("Created new ingredient \"{}\"", food.getName());
-        return foodRepository.save(food);
+
+        boolean exists = foodRepository.findAll().stream()
+                .map(Food::getName)
+                .anyMatch(foodDto.getName()::equals);
+
+        if(!exists) {
+            Food food = new Food();
+            food.setName(foodDto.getName());
+            food.setCategory(foodDto.getCategory());
+            food.setProteins(foodDto.getProteins());
+            food.setCarbohydrates(foodDto.getCarbohydrates());
+            food.setProteins(foodDto.getProteins());
+            food.setTotalCalories(foodDto.getTotalCalories());
+            food.setCategory(foodDto.getCategory());
+            log.debug("Created new ingredient \"{}\"", food.getName());
+            return foodRepository.save(food);
+        }
+        else return null;
     }
 
     public void updateFood(long foodId, FoodDto foodDto) {
