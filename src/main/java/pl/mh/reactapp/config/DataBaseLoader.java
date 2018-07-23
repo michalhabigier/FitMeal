@@ -1,14 +1,16 @@
 package pl.mh.reactapp.config;
 
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import pl.mh.reactapp.domain.Category;
-import pl.mh.reactapp.domain.Food;
-import pl.mh.reactapp.domain.Role;
-import pl.mh.reactapp.domain.RoleName;
+import pl.mh.reactapp.domain.*;
 import pl.mh.reactapp.repository.FoodRepository;
+import pl.mh.reactapp.repository.PostRepository;
 import pl.mh.reactapp.repository.RoleRepository;
+import pl.mh.reactapp.repository.UserRepository;
+
+import java.time.LocalDate;
 
 @Component
 public class DataBaseLoader implements CommandLineRunner {
@@ -17,10 +19,13 @@ public class DataBaseLoader implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public DataBaseLoader(FoodRepository foodRepository, RoleRepository roleRepository) {
+    public DataBaseLoader(FoodRepository foodRepository, RoleRepository roleRepository, UserRepository userRepository) {
         this.foodRepository = foodRepository;
         this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -37,5 +42,6 @@ public class DataBaseLoader implements CommandLineRunner {
         this.foodRepository.save(new Food("Kurczak, mięso z piersi bez skóry", 99, 21.5, 0, 1.3, Category.MEAT));
         this.roleRepository.save(new Role(RoleName.ROLE_USER));
         this.roleRepository.save(new Role(RoleName.ROLE_ADMIN));
+        this.userRepository.save(new User("login", "mail@gmail.com", LocalDate.of(1995, 5, 7), "password", Sex.MALE));
     }
 }

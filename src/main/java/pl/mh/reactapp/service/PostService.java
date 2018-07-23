@@ -5,6 +5,7 @@ import pl.mh.reactapp.domain.EatenFood;
 import pl.mh.reactapp.domain.Food;
 import pl.mh.reactapp.domain.Post;
 import pl.mh.reactapp.domain.User;
+import pl.mh.reactapp.exception.ResourceNotFoundException;
 import pl.mh.reactapp.payload.FoodDto;
 import pl.mh.reactapp.payload.PostDto;
 import pl.mh.reactapp.repository.EatenFoodRepository;
@@ -47,15 +48,14 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public void addEatenFood(long postId, long foodId, FoodDto eatenFoodDto) {
+    public void addEatenFood(long postId, long foodId, double portion) {
         Post post = postRepository.findById(postId);
         Food food = foodRepository.findById(foodId);
 
         EatenFood eatenFood = new EatenFood();
 
-        Double portion = eatenFoodDto.getPortion() / 100;
-
-        eatenFood.setQuantity(eatenFoodDto.getPortion());
+        eatenFood.setQuantity(portion);
+        portion = portion/100;
         eatenFood.setName(food.getName());
         eatenFood.setCarbohydrates(AmountRounder.round(food.getCarbohydrates() * portion));
         eatenFood.setProteins(AmountRounder.round(food.getProteins() * portion));
@@ -73,15 +73,14 @@ public class PostService {
         eatenFoodRepository.delete(food);
     }
 
-    public void editEatenFoodWeight(@Valid FoodDto eatenFoodDto, LocalDate localDate, long foodId) {
+    public void editEatenFoodWeight(double portion, LocalDate localDate, long foodId) {
         Post post = postRepository.findPostByDate(localDate);
         EatenFood eatenFood = eatenFoodRepository.findByPostAndFoodId(post, foodId);
 
         Food food = foodRepository.findById(foodId);
 
-        Double portion = eatenFoodDto.getPortion() / 100;
-
-        eatenFood.setQuantity(eatenFoodDto.getPortion());
+        eatenFood.setQuantity(portion);
+        portion = portion/100;
         eatenFood.setName(food.getName());
         eatenFood.setCarbohydrates(AmountRounder.round(food.getCarbohydrates() * portion));
         eatenFood.setProteins(AmountRounder.round(food.getProteins() * portion));
@@ -114,4 +113,15 @@ public class PostService {
         return postDto;
     }
 
+    public Post findUsersPostByDate(User user, LocalDate postDate){
+        return postRepository.findByUser(user)
+                .stream()
+                .filter(p -> p.getDate().equals(postDate))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Date", "localDate", postDate));
+    }
+
+    public List<EatenFood> getEatenFoodsByPost(Post post){
+        return eatenFoodRepository.findByPost(post);
+    }
 }

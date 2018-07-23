@@ -55,24 +55,17 @@ public class PostController {
     public PostDto getPost(@PathVariable(value = "localDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate postDate,
                            @CurrentUser UserPrincipal currentUser) {
         User user = userRepository.findUserById(currentUser.getId());
-        Post post = postRepository.findByUser(user)
-                .stream()
-                .filter(p -> p.getDate().equals(postDate))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Date", "localDate", postDate));
+        Post post = postService.findUsersPostByDate(user, postDate);
+
         return postService.calculate(post);
     }
 
     @PostMapping("/profile/me/{localDate}/{foodId}")
     public ResponseEntity<?> addEatenFood(@RequestBody @Valid FoodDto eatenFoodDto, @PathVariable long foodId, @PathVariable(value = "localDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate postDate, @CurrentUser UserPrincipal currentUser) {
         User user = userRepository.findUserById(currentUser.getId());
-        Post post = postRepository.findByUser(user)
-                .stream()
-                .filter(p -> p.getDate().equals(postDate))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Date", "localDate", postDate));
+        Post post = postService.findUsersPostByDate(user, postDate);
 
-        postService.addEatenFood(post.getId(), foodId, eatenFoodDto);
+        postService.addEatenFood(post.getId(), foodId, eatenFoodDto.getPortion());
         postService.calculate(post);
 
         URI location = ServletUriComponentsBuilder
@@ -86,11 +79,7 @@ public class PostController {
     @DeleteMapping("/profile/me/{localDate}/{foodId}")
     public ResponseEntity<?> deleteEatenFood(@PathVariable long foodId, @PathVariable(value = "localDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate postDate, @CurrentUser UserPrincipal currentUser) {
         User user = userRepository.findUserById(currentUser.getId());
-        Post post = postRepository.findByUser(user)
-                .stream()
-                .filter(p -> p.getDate().equals(postDate))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Date", "localDate", postDate));
+        Post post = postService.findUsersPostByDate(user, postDate);
 
         postService.deleteEatenFood(postDate, foodId);
         postService.calculate(post);
@@ -106,13 +95,9 @@ public class PostController {
     @PutMapping("/profile/me/{localDate}/{foodId}")
     public ResponseEntity<?> editEatenFoodWeight(@RequestBody @Valid FoodDto eatenFoodDto, @PathVariable long foodId, @PathVariable(value = "localDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate postDate, @CurrentUser UserPrincipal currentUser) {
         User user = userRepository.findUserById(currentUser.getId());
-        Post post = postRepository.findByUser(user)
-                .stream()
-                .filter(p -> p.getDate().equals(postDate))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Date", "localDate", postDate));
+        Post post = postService.findUsersPostByDate(user, postDate);
 
-        postService.editEatenFoodWeight(eatenFoodDto, postDate, foodId);
+        postService.editEatenFoodWeight(eatenFoodDto.getPortion(), postDate, foodId);
         postService.calculate(post);
 
         URI location = ServletUriComponentsBuilder

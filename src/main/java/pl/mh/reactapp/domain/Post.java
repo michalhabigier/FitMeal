@@ -1,13 +1,16 @@
 package pl.mh.reactapp.domain;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
 @Entity
+@Getter
+@Setter
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +32,6 @@ public class Post {
     @ManyToOne
     private User user;
 
-    public Post() {
-    }
-
     public Post(LocalDate date, List<EatenFood> foodList, double calories, double proteins, double carbohydrates, double fat, User user) {
         this.date = date;
         this.foodList = foodList;
@@ -40,5 +40,8 @@ public class Post {
         this.carbohydrates = carbohydrates;
         this.fat = fat;
         this.user = user;
+    }
+
+    public Post() {
     }
 }

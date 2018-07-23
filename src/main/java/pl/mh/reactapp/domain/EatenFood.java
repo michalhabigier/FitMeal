@@ -31,7 +31,7 @@ public class EatenFood {
     private Food food;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
     public EatenFood(Double quantity, Food food, Post post) {

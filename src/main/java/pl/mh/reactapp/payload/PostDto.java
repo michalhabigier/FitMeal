@@ -1,7 +1,6 @@
 package pl.mh.reactapp.payload;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import pl.mh.reactapp.domain.EatenFood;
 
 import java.time.LocalDate;
@@ -10,11 +9,13 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostDto {
 
-    private LocalDate localDate = LocalDate.now();
+    private LocalDate localDate;
 
-    private List<EatenFood> eatenFoods = new ArrayList<>();
+    private List<EatenFood> eatenFoods;
 
     private double calories;
 
@@ -23,4 +24,6 @@ public class PostDto {
     private double carbohydrates;
 
     private double fat;
+
+
 }
