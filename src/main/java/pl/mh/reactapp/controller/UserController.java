@@ -1,8 +1,11 @@
 package pl.mh.reactapp.controller;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.mh.reactapp.domain.Post;
 import pl.mh.reactapp.domain.User;
 import pl.mh.reactapp.domain.UserDetails;
 import pl.mh.reactapp.domain.Weight;
@@ -13,6 +16,7 @@ import pl.mh.reactapp.repository.WeightRepository;
 import pl.mh.reactapp.security.CurrentUser;
 import pl.mh.reactapp.security.UserPrincipal;
 import pl.mh.reactapp.service.CaloricNeedsService;
+import pl.mh.reactapp.service.WeightService;
 import pl.mh.reactapp.util.AgeCalculator;
 import pl.mh.reactapp.util.ObjectMapperUtils;
 
@@ -31,11 +35,14 @@ public class UserController {
 
     private final CaloricNeedsService caloricNeedsService;
 
+    private final WeightService weightService;
+
     public UserController(UserRepository userRepository, WeightRepository weightRepository,
-                          CaloricNeedsService caloricNeedsService) {
+                          CaloricNeedsService caloricNeedsService, WeightService weightService) {
         this.userRepository = userRepository;
         this.weightRepository = weightRepository;
         this.caloricNeedsService = caloricNeedsService;
+        this.weightService = weightService;
     }
 
     @PutMapping("/profile/me/editDetails")
@@ -91,15 +98,28 @@ public class UserController {
         return ObjectMapperUtils.mapAll(weights, WeightDto.class);
     }
 
+    @DeleteMapping("/profile/me/weightHistory/{weightDate}")
+    public ResponseEntity<?> deleteEatenFood(@PathVariable(value = "weightDate") @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                         LocalDate weightDate, @CurrentUser UserPrincipal currentUser){
+        User user = userRepository.findUserById(currentUser.getId());
+        weightService.deleteWeightByDate(weightDate, user);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath().path("/user/profile/{username}/weightHistory")
+                .buildAndExpand(user.getUsername()).toUri();
+        return ResponseEntity.created(location).body(
+                new ApiResponse(true, "User weight has been successfully deleted"));
+    }
 
     @PostMapping("/profile/me/addWeight")
     public ResponseEntity<?> saveCurrentWeight(@CurrentUser UserPrincipal currentUser,
                                                @Valid @RequestBody WeightDto weightDto) {
+
         User user = userRepository.findUserById(currentUser.getId());
-        Weight weight = new Weight(weightDto.getDate(), weightDto.getWeight(), user);
-        weightRepository.save(weight);
+        weightService.saveCurrentWeight(user, weightDto);
+
         URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/user/profile/{username}")
+                .fromCurrentContextPath().path("/user/profile/{username}/weightHistory")
                 .buildAndExpand(user.getUsername()).toUri();
         return ResponseEntity.created(location).body(
                 new ApiResponse(true, "User weight has been successfully saved"));

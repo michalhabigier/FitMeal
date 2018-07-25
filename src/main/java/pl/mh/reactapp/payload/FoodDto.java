@@ -32,4 +32,7 @@ public class FoodDto {
         this.portion = portion;
         this.category = category;
     }
+
+    public FoodDto() {
+    }
 }

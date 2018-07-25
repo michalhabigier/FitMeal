@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostDto {
 
-    private LocalDate localDate;
+    private LocalDate localDate = LocalDate.now();
 
     private List<EatenFood> eatenFoods;
 
