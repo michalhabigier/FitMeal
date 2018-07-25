@@ -11,14 +11,13 @@ import pl.mh.reactapp.domain.*;
 import pl.mh.reactapp.payload.CalculatorDto;
 import pl.mh.reactapp.payload.FoodDto;
 import pl.mh.reactapp.payload.PostDto;
-import pl.mh.reactapp.repository.EatenFoodRepository;
-import pl.mh.reactapp.repository.FoodRepository;
-import pl.mh.reactapp.repository.PostRepository;
-import pl.mh.reactapp.repository.UserRepository;
+import pl.mh.reactapp.payload.WeightDto;
+import pl.mh.reactapp.repository.*;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -39,10 +38,16 @@ public class ServiceTest {
     UserRepository userRepository;
 
     @Autowired
+    WeightRepository weightRepository;
+
+    @Autowired
     PostService postService;
 
     @Autowired
     FoodService foodService;
+
+    @Autowired
+    WeightService weightService;
 
     @Autowired
     private CaloricNeedsService caloricNeedsService;
@@ -137,4 +142,30 @@ public class ServiceTest {
         assertNotEquals(copyOfName, foodRepository.findById(addedFood.getId()).get().getName());
     }
 
+    @Test
+    public void weightServiceTest(){
+        final User dummyUser = userRepository.findUserById(1L);
+        WeightDto weightDto = new WeightDto();
+        weightDto.setDate(LocalDate.of(2018, 7, 20));
+        weightDto.setWeight(87.2);
+
+        weightService.saveCurrentWeight(dummyUser, weightDto);
+
+        weightDto.setDate(LocalDate.of(2018, 7, 22));
+        weightDto.setWeight(83.2);
+        weightService.saveCurrentWeight(dummyUser, weightDto);
+
+        weightDto.setDate(LocalDate.of(2018, 7, 24));
+        weightDto.setWeight(85.2);
+        weightService.saveCurrentWeight(dummyUser, weightDto);
+
+        assertEquals(3, weightRepository.findByUser(dummyUser).size());
+
+        assertEquals(87.2, weightService.getHighestWeight(dummyUser).getWeight(), 0);
+
+        assertEquals(83.2, weightService.getLowestWeight(dummyUser).getWeight(), 0);
+
+        assertEquals(85.2, weightService.getCurrentWeight(dummyUser).getWeight(), 0);
+
+    }
 }
